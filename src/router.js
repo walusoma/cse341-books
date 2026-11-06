@@ -3,7 +3,10 @@ import express from 'express';
 
 import {
     getAllBooks,
-    getBookById
+    getBookById,
+    createBook,
+    updateBook,
+    deleteBook
 } from './controllers/books.js';
 
 import {
@@ -18,12 +21,157 @@ const router = express.Router();
 
 // ==================== BOOK ROUTES ====================
 
-// GET all books
+/**
+ * @openapi
+ * /books:
+ *   get:
+ *     summary: Get all books
+ *     tags:
+ *       - Books
+ *     responses:
+ *       200:
+ *         description: Books retrieved successfully
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/books', getAllBooks);
 
-// GET one book
+/**
+ * @openapi
+ * /books/{id}:
+ *   get:
+ *     summary: Get a book by ID
+ *     tags:
+ *       - Books
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Book retrieved successfully
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/books/:id', getBookById);
 
+/**
+ * @openapi
+ * /books:
+ *   post:
+ *     summary: Create a new book
+ *     tags:
+ *       - Books
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - authorId
+ *               - title
+ *               - publicationDate
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: b4
+ *               authorId:
+ *                 type: string
+ *                 example: a1
+ *               title:
+ *                 type: string
+ *                 example: Example Book Title
+ *               publicationDate:
+ *                 type: string
+ *                 format: date
+ *                 example: '2026-01-15'
+ *     responses:
+ *       201:
+ *         description: Book created successfully
+ *       400:
+ *         description: Invalid book information or duplicate ID
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/books', createBook);
+
+/**
+ * @openapi
+ * /books/{id}:
+ *   put:
+ *     summary: Update a book
+ *     tags:
+ *       - Books
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - authorId
+ *               - title
+ *               - publicationDate
+ *             properties:
+ *               authorId:
+ *                 type: string
+ *                 example: a2
+ *               title:
+ *                 type: string
+ *                 example: Updated Book Title
+ *               publicationDate:
+ *                 type: string
+ *                 format: date
+ *                 example: '2026-02-20'
+ *     responses:
+ *       200:
+ *         description: Book updated successfully
+ *       400:
+ *         description: Invalid book information
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put('/books/:id', updateBook);
+
+/**
+ * @openapi
+ * /books/{id}:
+ *   delete:
+ *     summary: Delete a book
+ *     tags:
+ *       - Books
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Book deleted successfully
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete('/books/:id', deleteBook);
+
+
+// ==================== AUTHOR ROUTES ====================
 
 /**
  * @openapi
@@ -165,6 +313,5 @@ router.put('/authors/:id', updateAuthor);
  *         description: Internal server error
  */
 router.delete('/authors/:id', deleteAuthor);
-
 
 export default router;
